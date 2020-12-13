@@ -52,7 +52,7 @@ const Explorer = () => {
     }
   }, [name])
 
-  if (!name || isFetching) {
+  if (isFetching) {
     return null
   }
 

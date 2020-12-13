@@ -1,40 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
+  Button,
+  ChakraProvider,
+  Heading,
+  Input,
+  HStack,
   theme,
 } from '@chakra-ui/react';
+import { Route, useHistory } from 'react-router-dom';
+import Explorer from './components/Explorer';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
 
 function App() {
+  const history = useHistory()
+  const [,,currentName = ''] = window.location.pathname.split('/')
+  const [searchTerm, setSearchTerm] = useState(decodeURI(currentName))
+  const handleSubmit = (evt) => {
+    evt.preventDefault()
+    history.push(`/search/${encodeURI(searchTerm)}`)
+  }
+
   return (
     <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
+      <Box p='6' textAlign='center' mx='auto' width='min(70ch, 100%)'>
+        <ColorModeSwitcher />
+        <Heading as='h1' mb='6'>Employee Explorer</Heading>
+        <Box mx='auto' as='form' onSubmit={handleSubmit}>
+          <HStack>
+            <Input
+              placeholder='John Doe'
+              autoFocus
+              name='name'
+              value={searchTerm}
+              onChange={(evt) => setSearchTerm(evt.target.value)}
+            />
+            <Button colorScheme='teal' type='submit'>Search</Button>
+          </HStack>
+        </Box>
       </Box>
+      <Route path='/search/:name'>
+        <Explorer />
+      </Route>
     </ChakraProvider>
   );
 }
